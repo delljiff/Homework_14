@@ -1,5 +1,6 @@
 class Product:
     """Класс для описания продуктов"""
+
     name: str
     description: str
     price: float
@@ -10,4 +11,3 @@ class Product:
         self.description = description
         self.price = price
         self.quantity = quantity
-
