@@ -1,4 +1,5 @@
 class Category:
+    """Класс для описания категорий"""
     total_categories = 0
     total_products = 0
 
@@ -14,4 +15,5 @@ class Category:
         self.total_products_update()
 
     def total_products_update(self):
-        Category.total_products = len(self.products)
+        Category.total_products += len(self.products)
+
