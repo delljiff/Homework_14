@@ -17,3 +17,11 @@ class Category:
 
     def total_products_update(self):
         Category.total_products += len(self.products)
+
+    @classmethod
+    def get_category_count(cls):
+        return cls.total_categories
+
+    @classmethod
+    def get_product_count(cls):
+        return cls.total_products
