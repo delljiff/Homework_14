@@ -1,17 +1,23 @@
 import pytest
 
 from src.category import Category
+from src.product import Product
 
 
 @pytest.fixture()
 def category_groceries():
-    return Category("Groceries", "Vegetables", ["Cucumber", "Tomato", "Onion", "Potato"])
+    product1 = Product("Cucumber", "Green vegetable", 25.0, 10)
+    product2 = Product("Tomato", "Red vegetable", 30.57, 12)
+    product3 = Product("Onion", "Brown vegetable", 15.0, 20)
+    product4 = Product("Potato", "Root vegetable", 20.0, 15)
+    return Category("Groceries", "Vegetables", [product1, product2, product3, product4])
 
 
 def test_init(category_groceries):
     assert category_groceries.name == "Groceries"
     assert category_groceries.description == "Vegetables"
-    assert category_groceries.products == ["Cucumber", "Tomato", "Onion", "Potato"]
+    expected = "Cucumber, 25.0 руб. Остаток: 10 шт.\nTomato, 30.57 руб. Остаток: 12 шт.\nOnion, 15.0 руб. Остаток: 20 шт.\nPotato, 20.0 руб. Остаток: 15 шт."
+    assert category_groceries.products == expected
 
 
 def test_total_products_update(category_groceries):
@@ -33,7 +39,10 @@ def reset_counters():
 def test_init_category(category_groceries):
     assert category_groceries.name == "Groceries"
     assert category_groceries.description == "Vegetables"
-    assert category_groceries.products == ["Cucumber", "Tomato", "Onion", "Potato"]
+
+    assert category_groceries.products.count('\n') == 3  # 4 товара = 3 переноса
+
+    assert len(category_groceries.products) > 0
 
 
 def test_total_categories_increments(reset_counters):
@@ -120,3 +129,61 @@ def test_total_products_update_method(category_groceries):
 
     category_groceries.total_products_update()
     assert Category.total_products == 4
+
+
+@pytest.fixture()
+def sample_products():
+    """Фикстура с тестовыми продуктами"""
+    return [
+        Product("Cucumber", "Green vegetable", 25.0, 10),
+        Product("Tomato", "Red vegetable", 30.57, 12),
+        Product("Onion", "Brown vegetable", 15.0, 20),
+    ]
+
+
+@pytest.fixture()
+def category_with_products(sample_products):
+    """Фикстура с категорией и продуктами"""
+    return Category("Groceries", "Vegetables", sample_products)
+
+
+@pytest.fixture()
+def empty_category():
+    """Фикстура с пустой категорией"""
+    return Category("Empty", "No products", [])
+
+
+def test_products_getter_returns_string(category_with_products):
+    """Проверяем, что геттер возвращает строку"""
+    result = category_with_products.products
+    assert isinstance(result, str)
+    assert len(result) > 0
+
+
+def test_products_getter_formats_correctly(category_with_products):
+    """Проверяем правильность форматирования товаров"""
+    result = category_with_products.products
+
+    # Проверяем, что все товары есть в строке
+    assert "Cucumber" in result
+    assert "Tomato" in result
+    assert "Onion" in result
+
+    # Проверяем формат цены и остатка
+    assert "25.0 руб." in result
+    assert "30.57 руб." in result
+    assert "Остаток: 10 шт." in result
+    assert "Остаток: 20 шт." in result
+
+
+def test_products_getter_empty_category(empty_category):
+    """Проверяем, что для пустой категории возвращается сообщение"""
+    result = empty_category.products
+    assert result == "В категории нет товаров"
+
+
+def test_products_getter_returns_multiline_string(category_with_products):
+    """Проверяем, что для нескольких товаров возвращается многострочная строка"""
+    result = category_with_products.products
+    # Должно быть 2 переноса для 3 товаров (n-1 переносов)
+    assert result.count('\n') == 2
