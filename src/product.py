@@ -12,6 +12,14 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+    def __str__(self):
+        """Магический метод для строкового отображения"""
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        """Метод сложения для получения полной стоимости всех товаров на складе"""
+        return self.__price * self.quantity + other.__price * other.quantity
+
     @classmethod
     def new_product(cls, product_data):
         """

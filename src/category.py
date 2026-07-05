@@ -35,6 +35,14 @@ class Category:
 
         return "\n".join(result)
 
+    def __str__(self):
+        """Метод для строкового отображения категории"""
+        total_quantity = 0
+        for product in self.__products:
+            total_quantity += product.quantity
+
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     @classmethod
     def get_category_count(cls):
         return cls.total_categories
