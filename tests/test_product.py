@@ -74,34 +74,24 @@ def test_multiple_products(name, description, price, quantity):
 
 def test_new_product_creates_instance():
     """Проверяем, что new_product создает экземпляр Product"""
-    product_data = {
-        'name': 'Laptop',
-        'description': 'Gaming laptop',
-        'price': 1500.0,
-        'quantity': 5
-    }
+    product_data = {"name": "Laptop", "description": "Gaming laptop", "price": 1500.0, "quantity": 5}
 
     product = Product.new_product(product_data)
 
     assert isinstance(product, Product)
-    assert product.name == 'Laptop'
-    assert product.description == 'Gaming laptop'
+    assert product.name == "Laptop"
+    assert product.description == "Gaming laptop"
     assert product.price == 1500.0
     assert product.quantity == 5
 
 
 def test_new_product_works_with_different_values():
     """Проверяем new_product с разными значениями"""
-    product_data = {
-        'name': 'Phone',
-        'description': 'Smartphone',
-        'price': 799.99,
-        'quantity': 0
-    }
+    product_data = {"name": "Phone", "description": "Smartphone", "price": 799.99, "quantity": 0}
 
     product = Product.new_product(product_data)
 
-    assert product.name == 'Phone'
+    assert product.name == "Phone"
     assert product.price == 799.99
     assert product.quantity == 0  # может быть 0
 

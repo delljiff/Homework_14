@@ -40,7 +40,7 @@ def test_init_category(category_groceries):
     assert category_groceries.name == "Groceries"
     assert category_groceries.description == "Vegetables"
 
-    assert category_groceries.products.count('\n') == 3  # 4 товара = 3 переноса
+    assert category_groceries.products.count("\n") == 3  # 4 товара = 3 переноса
 
     assert len(category_groceries.products) > 0
 
@@ -186,7 +186,7 @@ def test_products_getter_returns_multiline_string(category_with_products):
     """Проверяем, что для нескольких товаров возвращается многострочная строка"""
     result = category_with_products.products
     # Должно быть 2 переноса для 3 товаров (n-1 переносов)
-    assert result.count('\n') == 2
+    assert result.count("\n") == 2
 
 
 def test_category_creation():
@@ -198,9 +198,12 @@ def test_category_creation():
     category = Category("Электроника", "Всякая техника", [p1, p2])
 
     assert category.name == "Электроника", f"Ошибка: ожидалось 'Электроника', получили '{category.name}'"
-    assert category.description == "Всякая техника", f"Ошибка: ожидалось 'Всякая техника', получили '{category.description}'"
-    assert len(
-        category._Category__products) == 2, f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
+    assert (
+        category.description == "Всякая техника"
+    ), f"Ошибка: ожидалось 'Всякая техника', получили '{category.description}'"
+    assert (
+        len(category._Category__products) == 2
+    ), f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
 
 
 def test_category_str():
@@ -241,8 +244,9 @@ def test_add_product():
     category.add_product(p2)
 
     # Проверяем, что товар добавился
-    assert len(
-        category._Category__products) == 2, f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
+    assert (
+        len(category._Category__products) == 2
+    ), f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
 
     # Проверяем общее количество
     total = 0
@@ -262,8 +266,9 @@ def test_add_product_duplicate():
     category.add_product(p1)
 
     # Проверяем, что товар не добавился повторно
-    assert len(
-        category._Category__products) == 1, f"Ошибка: ожидался 1 продукт, получили {len(category._Category__products)}"
+    assert (
+        len(category._Category__products) == 1
+    ), f"Ошибка: ожидался 1 продукт, получили {len(category._Category__products)}"
 
 
 def test_products_property():
