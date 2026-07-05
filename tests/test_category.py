@@ -187,3 +187,119 @@ def test_products_getter_returns_multiline_string(category_with_products):
     result = category_with_products.products
     # Должно быть 2 переноса для 3 товаров (n-1 переносов)
     assert result.count('\n') == 2
+
+
+def test_category_creation():
+    """Тест: создание категории"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+    p2 = Product("Мышь", "Беспроводная", 1000.0, 25)
+
+    category = Category("Электроника", "Всякая техника", [p1, p2])
+
+    assert category.name == "Электроника", f"Ошибка: ожидалось 'Электроника', получили '{category.name}'"
+    assert category.description == "Всякая техника", f"Ошибка: ожидалось 'Всякая техника', получили '{category.description}'"
+    assert len(
+        category._Category__products) == 2, f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
+
+
+def test_category_str():
+    """Тест: строковое отображение категории"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+    p2 = Product("Мышь", "Беспроводная", 1000.0, 25)
+    p3 = Product("Клавиатура", "Механическая", 3000.0, 7)
+
+    category = Category("Электроника", "Всякая техника", [p1, p2, p3])
+
+    expected = "Электроника, количество продуктов: 42 шт."
+    result = str(category)
+
+    assert result == expected, f"Ошибка: ожидалось '{expected}', получили '{result}'"
+
+
+def test_category_str_empty():
+    """Тест: строковое отображение пустой категории"""
+
+    category = Category("Пустая", "Нет товаров", [])
+
+    expected = "Пустая, количество продуктов: 0 шт."
+    result = str(category)
+
+    assert result == expected, f"Ошибка: ожидалось '{expected}', получили '{result}'"
+
+
+def test_add_product():
+    """Тест: добавление товара в категорию"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+    p2 = Product("Мышь", "Беспроводная", 1000.0, 25)
+
+    category = Category("Электроника", "Всякая техника", [p1])
+
+    # Добавляем второй товар
+    category.add_product(p2)
+
+    # Проверяем, что товар добавился
+    assert len(
+        category._Category__products) == 2, f"Ошибка: ожидалось 2 продукта, получили {len(category._Category__products)}"
+
+    # Проверяем общее количество
+    total = 0
+    for product in category._Category__products:
+        total += product.quantity
+    assert total == 35, f"Ошибка: ожидалось 35, получили {total}"
+
+
+def test_add_product_duplicate():
+    """Тест: добавление уже существующего товара (не должен добавиться повторно)"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+
+    category = Category("Электроника", "Всякая техника", [p1])
+
+    # Пытаемся добавить тот же товар
+    category.add_product(p1)
+
+    # Проверяем, что товар не добавился повторно
+    assert len(
+        category._Category__products) == 1, f"Ошибка: ожидался 1 продукт, получили {len(category._Category__products)}"
+
+
+def test_products_property():
+    """Тест: геттер products"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+    p2 = Product("Мышь", "Беспроводная", 1000.0, 25)
+    p3 = Product("Клавиатура", "Механическая", 3000.0, 7)
+
+    category = Category("Электроника", "Всякая техника", [p1, p2, p3])
+
+    expected = (
+        "Ноутбук, 50000.0 руб. Остаток: 10 шт.\n"
+        "Мышь, 1000.0 руб. Остаток: 25 шт.\n"
+        "Клавиатура, 3000.0 руб. Остаток: 7 шт."
+    )
+
+    assert category.products == expected, f"Ошибка: ожидалось '{expected}', получили '{category.products}'"
+
+
+def test_products_property_empty():
+    """Тест: геттер products для пустой категории"""
+
+    category = Category("Пустая", "Нет товаров", [])
+
+    expected = "В категории нет товаров"
+
+    assert category.products == expected, f"Ошибка: ожидалось '{expected}', получили '{category.products}'"
+
+
+def test_total_categories_count():
+    """Тест: подсчёт общего количества категорий"""
+    # Сбрасываем счётчик перед тестом (если нужно)
+    # Category.total_categories = 0
+
+    Category("Категория 1", "Описание", [])
+    Category("Категория 2", "Описание", [])
+
+    assert Category.total_categories >= 2, f"Ошибка: ожидалось минимум 2, получили {Category.total_categories}"

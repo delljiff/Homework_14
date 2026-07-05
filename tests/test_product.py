@@ -104,3 +104,46 @@ def test_new_product_works_with_different_values():
     assert product.name == 'Phone'
     assert product.price == 799.99
     assert product.quantity == 0  # может быть 0
+
+
+def test_product_creation():
+    """Тест: создание продукта"""
+
+    product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+
+    assert product.name == "Samsung Galaxy S23 Ultra", f"Ошибка: имя не совпадает"
+    assert product._Product__price == 180000.0, f"Ошибка: цена не совпадает"  # обращаемся к приватному атрибуту
+    assert product.quantity == 5, f"Ошибка: количество не совпадает"
+
+
+def test_product_str():
+    """Тест: строковое отображение"""
+
+    product = Product("Ноутбук", "Игровой", 50000.0, 10)
+
+    expected = "Ноутбук, 50000.0 руб. Остаток: 10 шт."
+    result = str(product)
+
+    assert result == expected, f"Ошибка: ожидалось '{expected}', получили '{result}'"
+
+
+def test_product_add():
+    """Тест: сложение продуктов (общая стоимость)"""
+
+    p1 = Product("Ноутбук", "Игровой", 50000.0, 10)
+    p2 = Product("Мышь", "Беспроводная", 1000.0, 25)
+
+    result = p1 + p2
+    expected = (50000.0 * 10) + (1000.0 * 25)  # 525000
+
+    assert result == expected, f"Ошибка: ожидалось {expected}, получили {result}"
+
+
+def test_product_add_same():
+    """Тест: сложение продукта с самим собой"""
+    p = Product("Телефон", "Смартфон", 10000.0, 3)
+
+    result = p + p
+    expected = (10000.0 * 3) * 2  # 60000
+
+    assert result == expected, f"Ошибка: ожидалось {expected}, получили {result}"
