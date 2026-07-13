@@ -18,8 +18,8 @@ class Product:
 
     def __add__(self, other):
         """Метод сложения для получения полной стоимости всех товаров на складе"""
-        if type(self) != type(other):
-            raise TypeError('Нельзя складывать объекты разных классов!')
+        if not isinstance(other, type(self)):
+            raise TypeError("Нельзя складывать объекты разных классов!")
         return self.__price * self.quantity + other.__price * other.quantity
 
     @classmethod
@@ -35,10 +35,10 @@ class Product:
         Product: Новый экземпляр класса Product
         """
         return cls(
-            product_data.get('name'),
-            product_data.get('description'),
-            product_data.get('price'),
-            product_data.get('quantity')
+            product_data.get("name"),
+            product_data.get("description"),
+            product_data.get("price"),
+            product_data.get("quantity"),
         )
 
     @property
@@ -57,6 +57,7 @@ class Product:
 
 class Smartphone(Product):
     """Подкласс Smartphone от родительского класса Product"""
+
     def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
         # Вызываем метод базового класса
         super().__init__(name, description, price, quantity)
@@ -69,6 +70,7 @@ class Smartphone(Product):
 
 class LawnGrass(Product):
     """Подкласс LawnGrass от родительского класса Product"""
+
     def __init__(self, name, description, price, quantity, country, germination_period, color):
         # Вызываем метод базового класса
         super().__init__(name, description, price, quantity)

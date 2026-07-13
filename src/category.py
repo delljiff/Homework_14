@@ -1,4 +1,4 @@
-from src.product import Product
+from product import Product
 
 
 class Category:
@@ -24,7 +24,7 @@ class Category:
     def add_product(self, product):
         """Добавляет товар в категорию"""
         if not isinstance(product, Product):
-            raise TypeError('Можно добавлять продукты класса Product и дочерних от него')
+            raise TypeError("Можно добавлять продукты класса Product и дочерних от него")
         if product not in self.__products:
             self.__products.append(product)
             Category.total_products += 1
