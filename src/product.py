@@ -51,3 +51,26 @@ class Product:
             print(f"Цена не должна быть нулевая или отрицательная. Получено значение: {new_price}")
         else:
             self.__price = new_price
+
+
+class Smartphone(Product):
+    """Подкласс Smartphone от родительского класса Product"""
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        # Вызываем метод базового класса
+        super().__init__(name, description, price, quantity)
+        # Дополнительный код
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """Подкласс LawnGrass от родительского класса Product"""
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        # Вызываем метод базового класса
+        super().__init__(name, description, price, quantity)
+        # Дополнительный код
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
