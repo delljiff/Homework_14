@@ -18,6 +18,8 @@ class Product:
 
     def __add__(self, other):
         """Метод сложения для получения полной стоимости всех товаров на складе"""
+        if type(self) != type(other):
+            raise TypeError('Нельзя складывать объекты разных классов!')
         return self.__price * self.quantity + other.__price * other.quantity
 
     @classmethod
