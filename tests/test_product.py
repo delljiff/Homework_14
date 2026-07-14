@@ -1,6 +1,6 @@
 import pytest
 
-from src.product import Product
+from src.product import Product, Smartphone, LawnGrass
 
 
 @pytest.fixture()
@@ -101,9 +101,9 @@ def test_product_creation():
 
     product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
 
-    assert product.name == "Samsung Galaxy S23 Ultra", f"Ошибка: имя не совпадает"
-    assert product._Product__price == 180000.0, f"Ошибка: цена не совпадает"  # обращаемся к приватному атрибуту
-    assert product.quantity == 5, f"Ошибка: количество не совпадает"
+    assert product.name == "Samsung Galaxy S23 Ultra", "Ошибка: имя не совпадает"
+    assert product._Product__price == 180000.0, "Ошибка: цена не совпадает"  # обращаемся к приватному атрибуту
+    assert product.quantity == 5, "Ошибка: количество не совпадает"
 
 
 def test_product_str():
@@ -137,3 +137,152 @@ def test_product_add_same():
     expected = (10000.0 * 3) * 2  # 60000
 
     assert result == expected, f"Ошибка: ожидалось {expected}, получили {result}"
+
+
+def test_add_two_products_same_class():
+    """Тест сложения двух продуктов одного класса"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    product2 = Product("Мышь", "Беспроводная мышь", 1500, 10)
+
+    result = product1 + product2
+    expected = 50000 * 5 + 1500 * 10  # 250000 + 15000 = 265000
+
+    assert result == expected
+
+
+def test_add_two_smartphones():
+    """Тест сложения двух смартфонов"""
+    phone1 = Smartphone("iPhone", "Флагман", 80000, 3, "A15", "iPhone 13", "128GB", "Black")
+    phone2 = Smartphone("Samsung", "Флагман", 70000, 4, "Exynos", "S22", "256GB", "White")
+
+    result = phone1 + phone2
+    expected = 80000 * 3 + 70000 * 4  # 240000 + 280000 = 520000
+
+    assert result == expected
+
+
+def test_add_two_lawn_grass_products():
+    """Тест сложения двух продуктов LawnGrass"""
+    grass1 = LawnGrass("Газон", "Зеленый", 500, 100, "Россия", "7 дней", "Зеленый")
+    grass2 = LawnGrass("Газон премиум", "Изумрудный", 800, 50, "Германия", "5 дней", "Изумрудный")
+
+    result = grass1 + grass2
+    expected = 500 * 100 + 800 * 50  # 50000 + 40000 = 90000
+
+    assert result == expected
+
+
+def test_add_product_with_zero_quantity():
+    """Тест сложения продуктов, где один имеет нулевое количество"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    product2 = Product("Мышь", "Беспроводная мышь", 1500, 0)
+
+    result = product1 + product2
+    expected = 50000 * 5 + 1500 * 0  # 250000
+
+    assert result == expected
+
+
+def test_add_product_with_one_quantity():
+    """Тест сложения продуктов, где один имеет количество 1"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    product2 = Product("Мышь", "Беспроводная мышь", 1500, 1)
+
+    result = product1 + product2
+    expected = 50000 * 5 + 1500 * 1  # 251500
+
+    assert result == expected
+
+
+def test_add_same_product_instance():
+    """Тест сложения продукта с самим собой"""
+    product = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    result = product + product
+    expected = 50000 * 5 + 50000 * 5  # 500000
+
+    assert result == expected
+
+
+def test_add_product_and_string_raises_type_error():
+    """Тест сложения продукта со строкой - должно вызывать TypeError"""
+    product = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    not_product = "Это строка"
+
+    with pytest.raises(TypeError) as exc_info:
+        product + not_product
+
+    assert str(exc_info.value) == "Нельзя складывать объекты разных классов!"
+
+
+def test_add_product_and_number_raises_type_error():
+    """Тест сложения продукта с числом - должно вызывать TypeError"""
+    product = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+
+    with pytest.raises(TypeError) as exc_info:
+        product + 100
+
+    assert str(exc_info.value) == "Нельзя складывать объекты разных классов!"
+
+
+def test_add_product_and_none_raises_type_error():
+    """Тест сложения продукта с None - должно вызывать TypeError"""
+    product = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+
+    with pytest.raises(TypeError) as exc_info:
+        product + None
+
+    assert str(exc_info.value) == "Нельзя складывать объекты разных классов!"
+
+
+def test_add_smartphone_and_lawn_grass_raises_type_error():
+    """Тест сложения смартфона и газонной травы (разные дочерние классы) - должно вызывать TypeError"""
+    smartphone = Smartphone("iPhone", "Флагман", 80000, 3, "A15", "iPhone 13", "128GB", "Black")
+    grass = LawnGrass("Газон", "Зеленый", 500, 100, "Россия", "7 дней", "Зеленый")
+
+    with pytest.raises(TypeError) as exc_info:
+        smartphone + grass
+
+    assert str(exc_info.value) == "Нельзя складывать объекты разных классов!"
+
+
+def test_add_commutativity():
+    """Тест коммутативности сложения (a + b == b + a)"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    product2 = Product("Мышь", "Беспроводная мышь", 1500, 10)
+
+    result1 = product1 + product2
+    result2 = product2 + product1
+
+    assert result1 == result2
+
+
+def test_add_with_large_numbers():
+    """Тест сложения с большими числами"""
+    product1 = Product("Сервер", "Мощный сервер", 1000000, 100)
+    product2 = Product("СХД", "Система хранения", 2000000, 50)
+
+    result = product1 + product2
+    expected = 1000000 * 100 + 2000000 * 50  # 100000000 + 100000000 = 200000000
+
+    assert result == expected
+
+
+def test_add_with_float_prices():
+    """Тест сложения продуктов с дробными ценами"""
+    product1 = Product("Конфеты", "Сладкие", 150.50, 10)
+    product2 = Product("Печенье", "Вкусное", 89.99, 5)
+
+    result = product1 + product2
+    expected = 150.50 * 10 + 89.99 * 5  # 1505 + 449.95 = 1954.95
+
+    assert result == expected
+
+
+def test_add_returns_number():
+    """Тест, что результатом сложения является число (int или float)"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+    product2 = Product("Мышь", "Беспроводная мышь", 1500, 10)
+
+    result = product1 + product2
+
+    assert isinstance(result, (int, float))
