@@ -1,4 +1,15 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class BaseProduct(ABC):
+    """Базовый абстрактный класс для класса Product"""
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+
+class Product(BaseProduct):
     """Класс для описания продуктов"""
 
     name: str
@@ -67,6 +78,9 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
+    def __str__(self):
+        return f"{self.name}, {self.model}, {self.color}. {self.price} руб. Остаток: {self.quantity} шт."
+
 
 class LawnGrass(Product):
     """Подкласс LawnGrass от родительского класса Product"""
@@ -78,3 +92,6 @@ class LawnGrass(Product):
         self.country = country
         self.germination_period = germination_period
         self.color = color
+
+    def __str__(self):
+        return f"{self.name}, {self.country}, {self.color}. {self.price} руб. Остаток: {self.quantity} шт."
