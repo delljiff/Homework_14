@@ -1,6 +1,6 @@
 import pytest
 
-from src.product import Product, Smartphone, LawnGrass
+from src.product import BaseProduct, LawnGrass, Product, ReprMixin, Smartphone
 
 
 @pytest.fixture()
@@ -286,3 +286,75 @@ def test_add_returns_number():
     result = product1 + product2
 
     assert isinstance(result, (int, float))
+
+
+class TestBaseProduct:
+    """Тесты для абстрактного базового класса"""
+
+    def test_base_product_has_abstract_method(self):
+        """Проверка наличия абстрактного метода __str__"""
+        assert hasattr(BaseProduct, "__str__")
+        # Проверяем, что метод абстрактный
+        assert BaseProduct.__str__.__isabstractmethod__ is True
+
+    def test_cannot_instantiate_base_product(self):
+        """Проверка, что нельзя создать экземпляр абстрактного класса"""
+        with pytest.raises(TypeError) as exc_info:
+            BaseProduct()
+        assert "Can't instantiate abstract class" in str(exc_info.value)
+
+
+class TestReprMixin:
+    """Тесты для миксина ReprMixin"""
+
+    def test_repr_mixin_inheritance(self):
+        """Проверка, что миксин можно использовать с другими классами"""
+
+        class TestClass(ReprMixin):
+            def __init__(self, name, description, price, quantity):
+                self.name = name
+                self.description = description
+                self.price = price
+                self.quantity = quantity
+                super().__init__()
+
+        obj = TestClass("Test", "Description", 100.5, 10)
+        expected = "TestClass(Test, Description, 100.5, 10)"
+        assert repr(obj) == expected
+
+    def test_repr_mixin_with_different_types(self):
+        """Проверка работы __repr__ с разными типами данных"""
+
+        class TestClass(ReprMixin):
+            def __init__(self, name, description, price, quantity):
+                self.name = name
+                self.description = description
+                self.price = price
+                self.quantity = quantity
+                super().__init__()
+
+        # Тест с целыми числами
+        obj1 = TestClass("Item", "Desc", 50, 5)
+        assert repr(obj1) == "TestClass(Item, Desc, 50, 5)"
+
+        # Тест с числами с плавающей точкой
+        obj2 = TestClass("Product", "Info", 99.99, 3)
+        assert repr(obj2) == "TestClass(Product, Info, 99.99, 3)"
+
+        # Тест со строками
+        obj3 = TestClass("Name", "Long description with spaces", 0.0, 0)
+        assert repr(obj3) == "TestClass(Name, Long description with spaces, 0.0, 0)"
+
+    def test_repr_returns_string(self):
+        """Проверка, что __repr__ возвращает строку"""
+
+        class TestClass(ReprMixin):
+            def __init__(self, name, description, price, quantity):
+                self.name = name
+                self.description = description
+                self.price = price
+                self.quantity = quantity
+                super().__init__()
+
+        obj = TestClass("Test", "Desc", 100, 10)
+        assert isinstance(repr(obj), str)
