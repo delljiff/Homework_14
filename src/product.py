@@ -9,7 +9,17 @@ class BaseProduct(ABC):
         pass
 
 
-class Product(BaseProduct):
+class ReprMixin:
+    """Класс-миксин"""
+
+    def __init__(self):
+        super().__init__()
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.name}, {self.description}, {self.price}, {self.quantity})"
+
+
+class Product(ReprMixin, BaseProduct):
     """Класс для описания продуктов"""
 
     name: str
@@ -18,6 +28,7 @@ class Product(BaseProduct):
     quantity: int
 
     def __init__(self, name, description, price, quantity):
+        super().__init__()
         self.name = name
         self.description = description
         self.__price = price
@@ -66,7 +77,7 @@ class Product(BaseProduct):
             self.__price = new_price
 
 
-class Smartphone(Product):
+class Smartphone(Product, ReprMixin):
     """Подкласс Smartphone от родительского класса Product"""
 
     def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
@@ -82,7 +93,7 @@ class Smartphone(Product):
         return f"{self.name}, {self.model}, {self.color}. {self.price} руб. Остаток: {self.quantity} шт."
 
 
-class LawnGrass(Product):
+class LawnGrass(Product, ReprMixin):
     """Подкласс LawnGrass от родительского класса Product"""
 
     def __init__(self, name, description, price, quantity, country, germination_period, color):
