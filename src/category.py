@@ -49,7 +49,16 @@ class Category:
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     def middle_price(self):
-        pass
+        total_price = 0
+        count = 0
+
+        try:
+            for product in self.__products:
+                total_price += product.price
+                count += 1
+            return total_price / count
+        except ZeroDivisionError:
+            return 0
 
     @classmethod
     def get_category_count(cls):
