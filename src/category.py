@@ -48,6 +48,9 @@ class Category:
 
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
+    def middle_price(self):
+        pass
+
     @classmethod
     def get_category_count(cls):
         return cls.total_categories

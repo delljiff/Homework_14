@@ -32,7 +32,10 @@ class Product(ReprMixin, BaseProduct):
         self.name = name
         self.description = description
         self.__price = price
-        self.quantity = quantity
+        if quantity == 0:
+            raise ValueError ('Товар с нулевым количеством не может быть добавлен')
+        else:
+            self.quantity = quantity
 
     def __str__(self):
         """Магический метод для строкового отображения"""
