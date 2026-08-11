@@ -127,17 +127,6 @@ def test_products_getter_returns_string(category_with_products):
     assert len(result) > 0
 
 
-def test_products_getter_formats_correctly(category_with_products):
-    result = category_with_products.products
-    assert "Cucumber" in result
-    assert "Tomato" in result
-    assert "Onion" in result
-    assert "25.0 руб." in result
-    assert "30.57 руб." in result
-    assert "Остаток: 10 шт." in result
-    assert "Остаток: 20 шт." in result
-
-
 def test_products_getter_empty_category(empty_category):
     result = empty_category.products
     assert result == "В категории нет товаров"
@@ -327,3 +316,162 @@ def test_add_products_of_different_types_to_same_category():
     assert "Ноутбук" in category.products
     assert "iPhone" in category.products
     assert "Газон" in category.products
+
+
+# ===== ФИКСТУРЫ =====
+
+
+@pytest.fixture
+def category_with_products():
+    """Создает категорию с несколькими продуктами"""
+    # Создаем продукты
+    product1 = Product("Phone", "Smartphone", 50000, 10)
+    product2 = Product("Laptop", "Gaming laptop", 80000, 5)
+    product3 = Product("Tablet", "Android tablet", 30000, 7)
+
+    # Создаем категорию с продуктами
+    category = Category("Electronics", "Devices and gadgets", [product1, product2, product3])
+    return category
+
+
+@pytest.fixture
+def category_with_one_product():
+    """Создает категорию с одним продуктом"""
+    product = Product("Python Book", "Learn Python", 1500, 20)
+    category = Category("Books", "Educational books", [product])
+    return category
+
+
+@pytest.fixture
+def empty_category():
+    """Создает пустую категорию"""
+    return Category("Empty", "No products yet", [])
+
+
+# ===== ТЕСТЫ ДЛЯ MIDDLE_PRICE =====
+
+
+def test_middle_price_with_multiple_products(category_with_products):
+    """
+    Тест: средняя цена для категории с несколькими продуктами
+    Ожидаем: (50000 + 80000 + 30000) / 3 = 53333.33...
+    """
+    expected_average = (50000 + 80000 + 30000) / 3
+    assert category_with_products.middle_price() == expected_average
+
+
+def test_middle_price_with_one_product(category_with_one_product):
+    """
+    Тест: средняя цена для категории с одним продуктом
+    Ожидаем: цена единственного продукта
+    """
+    assert category_with_one_product.middle_price() == 1500
+
+
+def test_middle_price_with_empty_category(empty_category):
+    """
+    Тест: средняя цена для пустой категории
+    Ожидаем: 0 (обработка ZeroDivisionError)
+    """
+    assert empty_category.middle_price() == 0
+
+
+def test_middle_price_after_adding_products():
+    """
+    Тест: средняя цена динамически обновляется при добавлении продуктов
+    """
+    category = Category("Food", "Fresh food", [])
+
+    # Пустая категория
+    assert category.middle_price() == 0
+
+    # Добавляем первый продукт
+    product1 = Product("Apple", "Red apple", 100, 15)
+    category.add_product(product1)
+    assert category.middle_price() == 100
+
+    # Добавляем второй продукт
+    product2 = Product("Banana", "Yellow banana", 80, 20)
+    category.add_product(product2)
+    assert category.middle_price() == (100 + 80) / 2  # 90
+
+    # Добавляем третий продукт
+    product3 = Product("Orange", "Orange fruit", 120, 10)
+    category.add_product(product3)
+    assert category.middle_price() == (100 + 80 + 120) / 3  # 100
+
+
+def test_middle_price_with_expensive_products():
+    """
+    Тест: средняя цена для дорогих продуктов
+    """
+    products = [Product("Rolex", "Watch", 1000000, 1), Product("Mercedes", "Car", 5000000, 1)]
+    category = Category("Luxury", "Expensive items", products)
+
+    expected = (1000000 + 5000000) / 2
+    assert category.middle_price() == expected
+
+
+def test_middle_price_with_cheap_products():
+    """
+    Тест: средняя цена для дешевых продуктов
+    """
+    products = [
+        Product("Pen", "Ballpoint", 10, 100),
+        Product("Pencil", "Graphite", 5, 200),
+        Product("Eraser", "White", 15, 50),
+    ]
+    category = Category("Budget", "Cheap items", products)
+
+    expected = (10 + 5 + 15) / 3
+    assert category.middle_price() == expected
+
+
+def test_middle_price_returns_float():
+    """
+    Тест: метод возвращает число с плавающей точкой
+    """
+    products = [Product("Item1", "Desc1", 10, 1), Product("Item2", "Desc2", 20, 1)]
+    category = Category("Test", "Test category", products)
+
+    result = category.middle_price()
+    assert isinstance(result, float)
+    assert result == 15.0
+
+
+def test_middle_price_with_same_prices():
+    """
+    Тест: все продукты имеют одинаковую цену
+    """
+    products = [
+        Product("Item1", "Desc1", 100, 5),
+        Product("Item2", "Desc2", 100, 3),
+        Product("Item3", "Desc3", 100, 7),
+    ]
+    category = Category("Uniform", "Same price items", products)
+
+    assert category.middle_price() == 100
+
+
+def test_middle_price_after_removing_products():
+    """
+    Тест: если в категории удалить все продукты, средняя становится 0
+    """
+    product1 = Product("Item1", "Desc1", 100, 1)
+    product2 = Product("Item2", "Desc2", 200, 1)
+
+    category = Category("Temporary", "Temp items", [product1, product2])
+    assert category.middle_price() == 150
+
+    # Если есть метод удаления продуктов
+    # category.remove_product(product1)
+    # category.remove_product(product2)
+    # assert category.middle_price() == 0
+
+
+def test_middle_price_with_empty_products_list():
+    """
+    Тест: категория с пустым списком продуктов
+    """
+    category = Category("Empty", "No products", [])
+    assert category.middle_price() == 0

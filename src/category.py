@@ -49,6 +49,7 @@ class Category:
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     def middle_price(self):
+        """Метод для подсчета средней цены товаров"""
         total_price = 0
         count = 0
 

@@ -358,3 +358,72 @@ class TestReprMixin:
 
         obj = TestClass("Test", "Desc", 100, 10)
         assert isinstance(repr(obj), str)
+
+
+def test_create_product_with_positive_quantity():
+    """Тест: создание товара с положительным количеством"""
+    product = Product("Телефон", "Смартфон", 50000, 10)
+    assert product.name == "Телефон"
+    assert product.description == "Смартфон"
+    assert product.quantity == 10
+    assert product._Product__price == 50000
+
+
+def test_product_with_zero_quantity():
+    """Тест продукта с нулевым количеством - должно выбрасываться исключение"""
+    with pytest.raises(ValueError) as exc_info:
+        Product("Empty", "No stock", 10.99, 0)
+
+    # Проверяем, что сообщение об ошибке правильное
+    assert str(exc_info.value) == "Товар с нулевым количеством не может быть добавлен"
+
+
+@pytest.mark.parametrize(
+    "name,description,price,quantity,expect_error",
+    [
+        ("Bread", "Fresh baked", 50.0, 15, False),  # Должен создаться
+        ("Milk", "3.2% fat", 80.5, 10, False),  # Должен создаться
+        ("Cheese", "Hard cheese", 250.0, 5, False),  # Должен создаться
+        ("Butter", "Salted", 120.0, 0, True),  # Должен выбросить ошибку
+    ],
+)
+def test_multiple_products(name, description, price, quantity, expect_error):
+    """Параметризованный тест для создания разных продуктов"""
+    if expect_error:
+        with pytest.raises(ValueError) as exc_info:
+            Product(name, description, price, quantity)
+        assert str(exc_info.value) == "Товар с нулевым количеством не может быть добавлен"
+    else:
+        product = Product(name, description, price, quantity)
+        assert product.name == name
+        assert product.description == description
+        assert product.quantity == quantity
+
+
+def test_new_product_works_with_different_values():
+    """Проверяем new_product с разными значениями"""
+    # Тест с нулевым количеством - должна быть ошибка
+    product_data_zero = {"name": "Phone", "description": "Smartphone", "price": 799.99, "quantity": 0}
+
+    with pytest.raises(ValueError) as exc_info:
+        Product.new_product(product_data_zero)
+    assert str(exc_info.value) == "Товар с нулевым количеством не может быть добавлен"
+
+    # Тест с положительным количеством - должен создаться
+    product_data_positive = {"name": "Phone", "description": "Smartphone", "price": 799.99, "quantity": 5}
+    product = Product.new_product(product_data_positive)
+    assert product.name == "Phone"
+    assert product.quantity == 5
+
+
+def test_add_product_with_zero_quantity():
+    """Тест сложения продуктов, где один имеет нулевое количество"""
+    product1 = Product("Ноутбук", "Мощный ноутбук", 50000, 5)
+
+    # Проверяем, что при создании продукта с нулевым количеством вылетает ошибка
+    with pytest.raises(ValueError) as exc_info:
+        Product("Мышь", "Беспроводная мышь", 1500, 0)
+    assert str(exc_info.value) == "Товар с нулевым количеством не может быть добавлен"
+
+    # Проверяем, что product1 создался нормально
+    assert product1.quantity == 5
